@@ -22,7 +22,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.replace("/dashboard");
+      router.replace("/games/hollow-knight");
     } catch (err: unknown) {
       const code = (err as { code?: string })?.code;
 

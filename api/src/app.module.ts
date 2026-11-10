@@ -9,6 +9,10 @@ import { FirebaseModule } from './firebase/firebase.module.js';
 
 import { AuthModule } from './auth/auth.module.js';
 
+import { UsersModule } from './users/users.module.js';
+
+import { CharmsModule } from './charms/charms.module.js';
+
 export const { ObserveModule, ObserveInstrument } =
   createObserveModule();
 
@@ -20,6 +24,8 @@ export const { ObserveModule, ObserveInstrument } =
 
     FirebaseModule,
     AuthModule,
+    UsersModule,
+    CharmsModule,
 
     ObserveModule.forRoot({
       appKey: process.env.OBSERVE_APP_KEY ?? 'YOUR_APP_KEY',

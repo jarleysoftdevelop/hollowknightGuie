@@ -24,5 +24,4 @@ dist/
 .DS_Store
 Thumbs.db
 
-# Firebase Admin credentials
-api/secrets/
+secrets/

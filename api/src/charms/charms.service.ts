@@ -8,36 +8,7 @@ import {
 } from 'firebase-admin/firestore';
 
 
-export interface UserCharmProgress {
-    id: string;
-    obtained?: boolean;
-    obtainedAt?: FirebaseFirestore.Timestamp | null;
-    updatedAt?: FirebaseFirestore.Timestamp;
-    charmId?: string;
-    slotId?: string;
-    name?: string;
-}
-
-export interface CharmAcquisition {
-    method: string;
-    requirements: string[];
-    steps: string[];
-    tips: string[];
-}
-
-export interface CharmSynergy {
-    charmIds: string[];
-    description: string;
-}
-
-export interface CharmLocationDetails {
-    region: string;
-    area: string;
-    description: string;
-    mapPointId: string | null;
-}
-
-export interface Charm {
+export interface CharmData {
     id: string;
     name: string;
     nameEn: string;
@@ -45,14 +16,30 @@ export interface Charm {
     effect: string;
     notches: number;
 
-    lore: string;
-    detailedEffect: string;
+    region: string;
+    location: string;
+    obtainedFrom: string;
+    geoCost: number | null;
 
-    acquisition: CharmAcquisition;
-    synergies: CharmSynergy[];
-    locationDetails: CharmLocationDetails;
+    category: string[];
 
-    spoilers: boolean;
+    slotId: string;
+    variantOf: string | null;
+    isTransformation: boolean;
+    completionPercent: number;
+
+    order: number;
+    imagePath: string | null;
+}
+
+export interface UserCharmProgress {
+    id: string;
+    slotId: string;
+    charmId?: string;
+    name?: string;
+    obtained: boolean;
+    obtainedAt?: FirebaseFirestore.Timestamp | null;
+    updatedAt?: FirebaseFirestore.Timestamp;
 }
 
 

@@ -20,9 +20,27 @@ import {
 
 import { auth } from "@/lib/firebase";
 
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+interface UserProfile {
+  username: string;
+  email: string;
+  avatar: string;
+  role: "admin" | "user";
+}
+
+interface ProfileResponse {
+  success: boolean;
+  profile: UserProfile;
+}
+
 interface AuthContextType {
   user: User | null;
+  profile: UserProfile | null;
   loading: boolean;
+  profileLoading: boolean;
+  isAdmin: boolean;
   register: (email: string, password: string) => Promise<User>;
   login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
@@ -33,17 +51,71 @@ const AuthContext = createContext<AuthContextType | undefined>(
   undefined
 );
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [user, setUser] = useState<User | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [profileLoading, setProfileLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    let active = true;
+
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (!active) return;
+
       setUser(currentUser);
-      setLoading(false);
+      setProfile(null);
+
+      if (!currentUser) {
+        setProfileLoading(false);
+        setLoading(false);
+        return;
+      }
+
+      setProfileLoading(true);
+
+      try {
+        const token = await currentUser.getIdToken();
+
+        const response = await fetch(`${API_URL}/users/profile`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          cache: "no-store",
+        });
+
+        if (!response.ok) {
+          throw new Error("No fue posible obtener el perfil");
+        }
+
+        const data: ProfileResponse = await response.json();
+
+        if (active) {
+          setProfile(data.profile);
+        }
+      } catch (error) {
+        console.error("Error obteniendo perfil:", error);
+
+        if (active) {
+          setProfile(null);
+        }
+      } finally {
+        if (active) {
+          setProfileLoading(false);
+          setLoading(false);
+        }
+      }
     });
 
-    return () => unsubscribe();
+    return () => {
+      active = false;
+      unsubscribe();
+    };
   }, []);
 
   const register = async (email: string, password: string) => {
@@ -74,11 +146,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await sendPasswordResetEmail(auth, email);
   };
 
+  const isAdmin = profile?.role === "admin";
+
   return (
     <AuthContext.Provider
       value={{
         user,
+        profile,
         loading,
+        profileLoading,
+        isAdmin,
         register,
         login,
         logout,

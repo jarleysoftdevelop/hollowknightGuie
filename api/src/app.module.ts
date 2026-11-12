@@ -13,6 +13,8 @@ import { UsersModule } from './users/users.module.js';
 
 import { CharmsModule } from './charms/charms.module.js';
 
+import { MapsModule } from './maps/maps.module.js';
+
 export const { ObserveModule, ObserveInstrument } =
   createObserveModule();
 
@@ -26,6 +28,7 @@ export const { ObserveModule, ObserveInstrument } =
     AuthModule,
     UsersModule,
     CharmsModule,
+    MapsModule,
 
     ObserveModule.forRoot({
       appKey: process.env.OBSERVE_APP_KEY ?? 'YOUR_APP_KEY',

@@ -39,6 +39,17 @@ export default function CharmsPage() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+
+    // const obtenerToken = async () => {
+    //     if (!user) return;
+      
+    //     const token = await user.getIdToken(true);
+      
+    //     console.log("FIREBASE ID TOKEN:", token);
+    //   };
+    
+    // obtenerToken();
+
     // Cargar catálogo y progreso del usuario
     const loadData = useCallback(async () => {
         if (!user) return;
